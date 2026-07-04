@@ -113,7 +113,7 @@ const Profile = () => {
 
       {/* Mobile Top Navbar placeholder */}
       <nav className="md:hidden border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
-        <span className="text-xl font-bold tracking-tight text-white">🏠 HostelHub</span>
+        <span className="text-xl font-bold tracking-tight text-slate-50">🏠 HostelHub</span>
         <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
           My Profile
         </span>
@@ -139,7 +139,7 @@ const Profile = () => {
           {/* Profile Details summary */}
           <div className="flex-1 text-center md:text-left space-y-4 w-full">
             <div className="space-y-1">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">{user?.name || 'Hub Student'}</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-50 leading-tight">{user?.name || 'Hub Student'}</h2>
               <p className="text-xs text-slate-400">{user?.email}</p>
               <p className="text-[10px] text-slate-550 font-medium font-mono uppercase tracking-wider mt-1 block">
                 Member Since {memberSince}
@@ -200,7 +200,7 @@ const Profile = () => {
               /* View Details Panel */
               <div className="bg-slate-900/40 border border-slate-850 p-6 rounded-2xl space-y-6">
                 <div className="flex justify-between items-center pb-4 border-b border-slate-850">
-                  <h3 className="font-extrabold text-white text-lg">Contact & Location Info</h3>
+                  <h3 className="font-extrabold text-slate-50 text-lg">Contact & Location Info</h3>
                   <button
                     onClick={() => {
                       setEditForm({
@@ -235,7 +235,7 @@ const Profile = () => {
               /* Edit Profile Form Panel */
               <form onSubmit={handleUpdateProfile} className="bg-slate-900/40 border border-slate-850 p-6 md:p-8 rounded-2xl shadow-xl space-y-6">
                 <div className="pb-4 border-b border-slate-850 text-left">
-                  <h3 className="font-extrabold text-white text-lg">Edit Contact & Location Info</h3>
+                  <h3 className="font-extrabold text-slate-50 text-lg">Edit Contact & Location Info</h3>
                   <p className="text-xs text-slate-400 mt-0.5">This information updates on your active product listings.</p>
                 </div>
 

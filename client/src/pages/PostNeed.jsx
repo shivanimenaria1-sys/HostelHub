@@ -92,7 +92,7 @@ const PostNeed = () => {
       {/* Navbar */}
       <nav className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">
+          <Link to="/" className="text-xl font-bold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors">
             🏠 HostelHub
           </Link>
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
@@ -121,7 +121,7 @@ const PostNeed = () => {
 
         <div className="z-10 relative space-y-8">
           <div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">Post a Need Request</h2>
+            <h2 className="text-3xl font-extrabold text-slate-50 tracking-tight">Post a Need Request</h2>
             <p className="text-slate-400 text-sm mt-1">Can't find an item? Post what you need and let the community know.</p>
           </div>
 
@@ -134,7 +134,7 @@ const PostNeed = () => {
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">🎉</span>
                     <div>
-                      <h3 className="font-extrabold text-emerald-450 text-white text-lg">Good news! These are already available:</h3>
+                      <h3 className="font-extrabold text-emerald-450 text-slate-50 text-lg">Good news! These are already available:</h3>
                       <p className="text-xs text-slate-305 text-slate-300 mt-1">
                         We found matches in the same category in your hostel. Take a look before waiting!
                       </p>
@@ -151,7 +151,7 @@ const PostNeed = () => {
                 <div className="bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-2xl text-left flex items-start gap-3 shadow-xl">
                   <span className="text-2xl">📢</span>
                   <div>
-                    <h3 className="font-extrabold text-white text-lg">Request Posted Successfully!</h3>
+                    <h3 className="font-extrabold text-slate-50 text-lg">Request Posted Successfully!</h3>
                     <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                       Your request has been posted on the open board. We'll notify you if someone lists a matching item.
                     </p>

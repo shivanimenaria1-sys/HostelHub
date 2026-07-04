@@ -22,9 +22,10 @@ const upload = multer({
  * Reusable upload middleware wrapper to catch Multer errors
  */
 const uploadImages = (req, res, next) => {
+  console.log('uploadMiddleware: uploadImages called. Content-Type:', req.headers['content-type']);
   upload(req, res, (err) => {
     if (err) {
-      console.error('Multer Upload Middleware Error:', err.message);
+      console.error('Multer Upload Middleware Error:', err);
       
       // Handle file limit sizes
       if (err.code === 'LIMIT_FILE_SIZE') {
@@ -48,6 +49,7 @@ const uploadImages = (req, res, next) => {
         message: err.message || 'File upload failed'
       });
     }
+    console.log('uploadMiddleware: upload success. req.files populated:', req.files);
     next();
   });
 };

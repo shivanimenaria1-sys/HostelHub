@@ -82,7 +82,7 @@ const MyListings = () => {
       {/* Navbar */}
       <nav className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">
+          <Link to="/" className="text-xl font-bold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors">
             🏠 HostelHub
           </Link>
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
@@ -108,7 +108,7 @@ const MyListings = () => {
       {/* Main Content */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-10 space-y-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">Your Listings</h2>
+          <h2 className="text-3xl font-extrabold text-slate-50 tracking-tight">Your Listings</h2>
           <p className="text-slate-400 text-sm mt-1">Manage and track your products listed for sale.</p>
         </div>
 
@@ -117,7 +117,7 @@ const MyListings = () => {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-slate-900/40 border border-slate-850 p-4 rounded-2xl text-left">
               <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Total Listings</span>
-              <span className="text-2xl font-black text-white mt-1 block">{totalListings}</span>
+              <span className="text-2xl font-black text-slate-50 mt-1 block">{totalListings}</span>
             </div>
             <div className="bg-slate-900/40 border border-slate-850 p-4 rounded-2xl text-left border-l-emerald-500/20">
               <span className="text-[10px] uppercase font-bold tracking-wider text-slate-550 text-slate-400 block">Available</span>
@@ -154,7 +154,7 @@ const MyListings = () => {
           /* Error State view */
           <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-center space-y-4 max-w-md mx-auto">
             <span className="text-3xl">⚠️</span>
-            <h3 className="text-lg font-bold text-white">Oops! Something went wrong</h3>
+            <h3 className="text-lg font-bold text-slate-50">Oops! Something went wrong</h3>
             <p className="text-sm text-slate-400">{error}</p>
             <button
               onClick={fetchMyListings}
@@ -170,7 +170,7 @@ const MyListings = () => {
               🏷️
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-white">No listings found</h3>
+              <h3 className="text-xl font-bold text-slate-50">No listings found</h3>
               <p className="text-sm text-slate-400">
                 You haven't listed any products yet. Share items like textbooks, snacks, or furniture with your hostel mates.
               </p>
@@ -215,8 +215,8 @@ const MyListings = () => {
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                   <div className="space-y-2 text-left">
                     <div className="flex justify-between items-start gap-2">
-                      <h3 className="font-bold text-lg text-white line-clamp-1">{product.title}</h3>
-                      <span className="text-indigo-400 font-extrabold text-lg">${product.price.toFixed(2)}</span>
+                      <h3 className="font-bold text-lg text-slate-50 line-clamp-1">{product.title}</h3>
+                      <span className="text-indigo-400 font-extrabold text-lg">₹{product.price}</span>
                     </div>
                     {product.description && (
                       <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">

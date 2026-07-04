@@ -11,7 +11,7 @@ const NotFound = () => {
         <div className="bg-indigo-600/10 text-indigo-400 px-3 py-1 rounded-md text-xs font-semibold uppercase tracking-wider inline-block">
           Page Not Found
         </div>
-        <h2 className="text-2xl font-bold text-white mt-4">Lost in Transit?</h2>
+        <h2 className="text-2xl font-bold text-slate-50 mt-4">Lost in Transit?</h2>
         <p className="text-slate-400">
           The page you are looking for does not exist or has been relocated to another address.
         </p>

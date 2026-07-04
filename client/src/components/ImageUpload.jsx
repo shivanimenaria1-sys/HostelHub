@@ -81,7 +81,11 @@ const ImageUpload = ({ value = [], onChange, maxImages = 5 }) => {
 
   // Perform upload to server
   const handleUpload = async () => {
-    if (localFiles.length === 0) return;
+    if (localFiles.length === 0) {
+      console.log('ImageUpload: handleUpload called but localFiles is empty');
+      return;
+    }
+    console.log('ImageUpload: handleUpload triggered. localFiles:', localFiles);
     setUploading(true);
     setError('');
 
@@ -90,17 +94,17 @@ const ImageUpload = ({ value = [], onChange, maxImages = 5 }) => {
       formData.append('images', item.file);
     });
 
+    console.log('ImageUpload: sending POST request to /upload with formData...');
     try {
-      const response = await axiosInstance.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await axiosInstance.post('/upload', formData);
+      console.log('ImageUpload: upload response received successfully:', response);
       const data = response.data;
 
       // Append new URLs to the parent array
       const newUrls = data.urls || [];
+      console.log('ImageUpload: response urls:', newUrls);
       const updatedUrls = [...value, ...newUrls];
+      console.log('ImageUpload: updating parent state with updatedUrls:', updatedUrls);
       onChange(updatedUrls);
 
       toast.success('Images uploaded successfully!');
@@ -109,12 +113,14 @@ const ImageUpload = ({ value = [], onChange, maxImages = 5 }) => {
       localFiles.forEach(item => URL.revokeObjectURL(item.preview));
       setLocalFiles([]);
     } catch (err) {
-      console.error(err);
-      const errMsg = err.response?.data?.message || 'Error uploading files. Please try again.';
+      console.error('ImageUpload: error uploading files:', err);
+      const errMsg = err.response?.data?.message || err.response?.data || err.message || 'Error uploading files. Please try again.';
+      console.error('ImageUpload: error message parsed:', errMsg);
       setError(errMsg);
       toast.error(errMsg);
     } finally {
       setUploading(false);
+      console.log('ImageUpload: handleUpload completed.');
     }
   };
 

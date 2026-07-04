@@ -175,7 +175,7 @@ const AddProduct = () => {
       {/* Navbar */}
       <nav className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">
+          <Link to="/" className="text-xl font-bold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors">
             🏠 HostelHub
           </Link>
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
@@ -184,7 +184,7 @@ const AddProduct = () => {
         </div>
         <Link
           to="/products/my-listings"
-          className="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-850 transition-all"
+          className="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-slate-50 px-3 py-1.5 rounded-lg border border-slate-850 transition-all"
         >
           Cancel
         </Link>
@@ -197,7 +197,7 @@ const AddProduct = () => {
 
         <div className="z-10 relative space-y-8">
           <div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl font-extrabold text-slate-50 tracking-tight">
               {isEditMode ? 'Edit Listing' : 'Sell an Item'}
             </h2>
             <p className="text-slate-400 text-sm mt-1">
@@ -237,7 +237,7 @@ const AddProduct = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-semibold text-slate-450 uppercase tracking-wider mb-2">
-                  Selling Price ($)
+                  Selling Price (₹)
                 </label>
                 <input
                   type="number"

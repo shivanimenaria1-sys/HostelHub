@@ -155,7 +155,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center justify-between w-full md:w-auto">
-            <Link to="/" className="text-2xl font-black tracking-tight text-white hover:text-indigo-400 transition-colors flex items-center gap-2">
+            <Link to="/" className="text-2xl font-black tracking-tight text-slate-50 hover:text-indigo-400 transition-colors flex items-center gap-2">
               🏠 HostelHub
             </Link>
             {/* Quick Actions (Mobile) */}
@@ -252,7 +252,7 @@ const Home = () => {
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-400/20">
               COMMUNITY BOARD
             </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white">Can't find what you are looking for?</h2>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-50">Can't find what you are looking for?</h2>
             <p className="text-slate-300 text-sm max-w-xl">
               Post your urgent requests on the Needs Board (e.g. borrow a calculator, request snacks late night) and let students around your hostel help you!
             </p>

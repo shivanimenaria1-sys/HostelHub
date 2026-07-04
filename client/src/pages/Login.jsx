@@ -59,7 +59,7 @@ const Login = () => {
       <div className="w-full max-w-md z-10">
         {/* Logo / Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-extrabold tracking-tight text-white hover:text-indigo-400 transition-colors flex items-center justify-center gap-2">
+          <Link to="/" className="text-3xl font-extrabold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors flex items-center justify-center gap-2">
             🏠 HostelHub
           </Link>
           <p className="text-slate-400 mt-2 text-sm">Your all-in-one hostel community manager</p>
@@ -68,7 +68,7 @@ const Login = () => {
         {/* Card */}
         <div className="bg-slate-900/55 backdrop-blur-xl border border-slate-800 p-8 rounded-2xl shadow-xl space-y-6">
           <div className="text-center">
-            <h2 className="text-xl font-bold text-white">Sign In / Sign Up</h2>
+            <h2 className="text-xl font-bold text-slate-50">Sign In / Sign Up</h2>
             <p className="text-xs text-slate-400 mt-1">Access rooms registry, needs board, and services</p>
           </div>
 

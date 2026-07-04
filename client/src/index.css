@@ -2,6 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Light Mode (Inverted Slate Colors) - space separated for Tailwind opacity compatibility */
+  --slate-50-rgb: 15 23 42;      /* dark text */
+  --slate-100-rgb: 15 23 42;     /* dark text */
+  --slate-200-rgb: 15 23 42;     /* dark text */
+  --slate-300-rgb: 30 41 59;     /* dark text */
+  --slate-400-rgb: 71 85 105;    /* mid-dark text */
+  --slate-500-rgb: 100 116 139;  /* medium gray */
+  --slate-600-rgb: 148 163 184;  /* light-medium text */
+  --slate-700-rgb: 203 213 225;  /* light gray border/text */
+  --slate-800-rgb: 226 232 240;  /* light gray border */
+  --slate-850-rgb: 241 245 249;  /* light bg card */
+  --slate-900-rgb: 248 250 252;  /* light bg surface */
+  --slate-950-rgb: 255 255 255;  /* light bg body */
+}
+
+.dark {
+  /* Dark Mode (Standard Slate Colors) */
+  --slate-50-rgb: 248 250 252;
+  --slate-100-rgb: 241 245 249;
+  --slate-200-rgb: 226 232 240;
+  --slate-300-rgb: 203 213 225;
+  --slate-400-rgb: 148 163 184;
+  --slate-500-rgb: 100 116 139;
+  --slate-600-rgb: 71 85 105;
+  --slate-700-rgb: 51 65 85;
+  --slate-800-rgb: 30 41 59;
+  --slate-850-rgb: 24 33 47;
+  --slate-900-rgb: 15 23 42;
+  --slate-950-rgb: 2 6 23;
+}
+
 /* Custom body rules if needed */
 body {
   margin: 0;
@@ -10,4 +42,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(var(--slate-950-rgb));
+  color: rgb(var(--slate-100-rgb));
 }

@@ -159,7 +159,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 text-center">
         <span className="text-6xl mb-4">🏷️</span>
-        <h2 className="text-3xl font-extrabold text-white">Listing Not Found</h2>
+        <h2 className="text-3xl font-extrabold text-slate-50">Listing Not Found</h2>
         <p className="text-slate-400 mt-2 text-sm max-w-sm">
           The listing you are searching for might have been sold, deleted, or expired.
         </p>
@@ -178,7 +178,7 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 text-center gap-4">
         <span className="text-4xl">📡</span>
-        <h2 className="text-xl font-bold text-white">Connection Error</h2>
+        <h2 className="text-xl font-bold text-slate-50">Connection Error</h2>
         <p className="text-slate-400 text-sm">{error}</p>
         <button
           onClick={fetchProductDetail}
@@ -195,7 +195,7 @@ const ProductDetail = () => {
       {/* Navbar */}
       <nav className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">
+          <Link to="/" className="text-xl font-bold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors">
             🏠 HostelHub
           </Link>
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
@@ -285,7 +285,7 @@ const ProductDetail = () => {
                 <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold rounded-lg uppercase tracking-wider">
                   {product.category}
                 </span>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-50 leading-tight">
                   {product.title}
                 </h1>
                 <p className="text-xs text-slate-500">
@@ -294,7 +294,7 @@ const ProductDetail = () => {
               </div>
 
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-indigo-400">${product.price.toFixed(2)}</span>
+                <span className="text-3xl font-black text-indigo-400">₹{product.price}</span>
                 <span className="text-xs text-slate-400">Fixed Price</span>
               </div>
 
@@ -303,7 +303,7 @@ const ProductDetail = () => {
                 <div className="text-2xl">📍</div>
                 <div className="text-sm">
                   <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Exchange Location</p>
-                  <p className="font-bold text-white mt-0.5">{product.hostel} • Room {product.roomNumber}</p>
+                  <p className="font-bold text-slate-100 mt-0.5">{product.hostel} • Room {product.roomNumber}</p>
                 </div>
               </div>
 
@@ -325,7 +325,7 @@ const ProductDetail = () => {
                   </div>
                   <div>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider font-mono">Seller Profile</p>
-                    <p className="font-bold text-white mt-0.5">{product.seller?.name || 'Hub Student'}</p>
+                    <p className="font-bold text-slate-100 mt-0.5">{product.seller?.name || 'Hub Student'}</p>
                   </div>
                 </div>
                 
@@ -379,7 +379,7 @@ const ProductDetail = () => {
                 {/* 2. Share Button */}
                 <button
                   onClick={handleShare}
-                  className="px-5 py-4 bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-white font-semibold rounded-2xl transition-all flex items-center justify-center gap-1 cursor-pointer"
+                  className="px-5 py-4 bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-slate-50 font-semibold rounded-2xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                   title="Share listing Link"
                 >
                   🔗 {shareSuccess ? 'Link Copied!' : 'Share'}
@@ -392,7 +392,7 @@ const ProductDetail = () => {
         {/* Section: Related Products */}
         {!loading && relatedProducts.length > 0 && (
           <div className="space-y-6 pt-10 border-t border-slate-900">
-            <h2 className="text-xl font-bold text-white text-left">More from {product?.hostel} in {product?.category}</h2>
+            <h2 className="text-xl font-bold text-slate-50 text-left">More from {product?.hostel} in {product?.category}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {relatedProducts.map(related => (
                 <ProductCard key={related._id} product={related} />

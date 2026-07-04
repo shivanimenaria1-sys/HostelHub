@@ -1,11 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axiosInstance';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const Layout = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    return document.documentElement.classList.contains('dark');
+  });
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 15000);
+      return () => clearInterval(interval);
+    }
+  }, [isAuthenticated]);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await axiosInstance.get('/notifications');
+      if (res.data.status === 'success') {
+        setNotifications(res.data.notifications);
+        setUnreadCount(res.data.unreadCount);
+      }
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    }
+  };
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      const res = await axiosInstance.patch(`/notifications/${id}/read`);
+      if (res.data.status === 'success') {
+        setNotifications(prev => prev.map(n => n._id === id ? { ...n, isRead: true } : n));
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+    }
+  };
+
+  const toggleTheme = () => {
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    if (newIsDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
 
   // SVG Icons
   const HomeIcon = () => (
@@ -44,6 +101,12 @@ const Layout = () => {
     </svg>
   );
 
+  const SunIcon = () => (
+    <svg className="w-5 h-5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+    </svg>
+  );
+
   const PlusIcon = () => (
     <svg className="w-5 h-5 stroke-current" viewBox="0 0 20 20" fill="currentColor">
       <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -55,6 +118,7 @@ const Layout = () => {
     navigate('/login');
   };
 
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-20 md:pb-0">
       
@@ -64,7 +128,7 @@ const Layout = () => {
           <div className="max-w-7xl mx-auto flex justify-between items-center">
             {/* Logo */}
             <div className="flex items-center gap-6">
-              <Link to="/" className="text-xl font-bold tracking-tight text-white hover:text-indigo-400 transition-colors">
+              <Link to="/" className="text-xl font-bold tracking-tight text-slate-50 hover:text-indigo-400 transition-colors">
                 🏠 HostelHub
               </Link>
               
@@ -110,6 +174,16 @@ const Layout = () => {
                 >
                   My Listings
                 </NavLink>
+                <NavLink
+                  to="/dashboard"
+                  className={({ isActive }) =>
+                    `text-xs font-bold tracking-wide transition-all ${
+                      isActive ? 'text-indigo-400' : 'text-slate-400 hover:text-slate-200'
+                    }`
+                  }
+                >
+                  Room Exchange
+                </NavLink>
               </div>
             </div>
 
@@ -123,22 +197,84 @@ const Layout = () => {
                 <PlusIcon /> Add Product
               </Link>
 
-              {/* Notification bell placeholder */}
-              <button
-                onClick={() => alert('Notifications feature coming soon!')}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-slate-400 hover:text-slate-200 transition-all"
-                title="Notifications"
-              >
-                <BellIcon />
-              </button>
+              {/* Notification bell dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowNotifications(prev => !prev)}
+                  className="p-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-slate-400 hover:text-slate-200 transition-all relative"
+                  title="Notifications"
+                >
+                  <BellIcon />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
 
-              {/* Dark mode placeholder */}
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl py-2 z-55 max-h-96 overflow-y-auto">
+                    <div className="px-4 py-2 border-b border-slate-800 flex justify-between items-center">
+                      <span className="text-xs font-bold text-slate-50">Notifications</span>
+                      {unreadCount > 0 && (
+                        <span className="text-[9px] font-bold bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-full">
+                          {unreadCount} Unread
+                        </span>
+                      )}
+                    </div>
+                    {notifications.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-xs text-slate-400">
+                        No notifications yet.
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-slate-850/50">
+                        {notifications.map(n => (
+                          <div
+                            key={n._id}
+                            onClick={() => handleMarkAsRead(n._id)}
+                            className={`p-3 text-left transition-colors cursor-pointer hover:bg-slate-850/50 ${
+                              !n.isRead ? 'bg-indigo-500/[0.02]' : ''
+                            }`}
+                          >
+                            <div className="flex gap-2">
+                              {n.sender?.profilePic ? (
+                                <img
+                                  src={n.sender.profilePic}
+                                  alt=""
+                                  className="w-6 h-6 rounded-full object-cover mt-0.5"
+                                />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] text-slate-400 mt-0.5">
+                                  🔔
+                                </div>
+                              )}
+                              <div className="flex-1 space-y-1">
+                                <p className={`text-xs ${!n.isRead ? 'font-bold text-slate-200' : 'text-slate-400'}`}>
+                                  {n.message}
+                                </p>
+                                <p className="text-[9px] text-slate-500">
+                                  {dayjs(n.createdAt).fromNow()}
+                                </p>
+                              </div>
+                              {!n.isRead && (
+                                <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full mt-2"></div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Dark mode toggle */}
               <button
-                onClick={() => alert('Dark Mode configuration is already loaded by default!')}
+                onClick={toggleTheme}
                 className="p-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-850 hover:border-slate-750 text-slate-400 hover:text-slate-200 transition-all"
                 title="Toggle Theme"
               >
-                <MoonIcon />
+                {isDark ? <SunIcon /> : <MoonIcon />}
               </button>
 
               {/* Profile Avatar & Dropdown */}
@@ -159,15 +295,22 @@ const Layout = () => {
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl py-2 z-55">
                     <div className="px-4 py-2 border-b border-slate-800 text-left">
-                      <p className="text-xs font-bold text-white truncate">{user?.name}</p>
+                      <p className="text-xs font-bold text-slate-50 truncate">{user?.name}</p>
                       <p className="text-[10px] text-slate-400 truncate">{user?.email}</p>
                     </div>
                     <Link
                       to="/profile"
                       onClick={() => setShowDropdown(false)}
-                      className="block text-left px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white"
+                      className="block text-left px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-slate-50"
                     >
                       My Profile
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setShowDropdown(false)}
+                      className="block text-left px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-slate-50"
+                    >
+                      Room Switch & Roommate
                     </Link>
                     <button
                       onClick={() => {

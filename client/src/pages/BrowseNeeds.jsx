@@ -193,7 +193,7 @@ const BrowseNeeds = () => {
       <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-900 px-4 py-3 md:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center justify-between w-full md:w-auto">
-            <Link to="/" className="text-2xl font-black tracking-tight text-white hover:text-indigo-400 transition-colors flex items-center gap-2">
+            <Link to="/" className="text-2xl font-black tracking-tight text-slate-50 hover:text-indigo-400 transition-colors flex items-center gap-2">
               🏠 HostelHub
             </Link>
             <span className="text-xs px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 md:hidden block">
@@ -243,7 +243,7 @@ const BrowseNeeds = () => {
       {/* Main Board */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6 md:py-8 space-y-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">Open Needs Board</h2>
+          <h2 className="text-3xl font-extrabold text-slate-50 tracking-tight">Open Needs Board</h2>
           <p className="text-slate-405 text-slate-400 text-sm mt-1">See what other students in your hostel are currently looking for and lend a helping hand.</p>
         </div>
 
@@ -294,7 +294,7 @@ const BrowseNeeds = () => {
           </div>
 
           <div className="text-xs text-slate-400 font-medium">
-            Showing <span className="text-white font-bold">{pagination.totalNeeds}</span> open requests
+            Showing <span className="text-slate-50 font-bold">{pagination.totalNeeds}</span> open requests
           </div>
         </div>
 
@@ -326,7 +326,7 @@ const BrowseNeeds = () => {
           /* Error State view */
           <div className="py-16 text-center max-w-md mx-auto space-y-4">
             <span className="text-4xl">📡</span>
-            <h3 className="text-lg font-bold text-white">Connection Error</h3>
+            <h3 className="text-lg font-bold text-slate-50">Connection Error</h3>
             <p className="text-slate-405 text-slate-400 text-sm">{error}</p>
             <button
               onClick={fetchNeeds}
@@ -342,7 +342,7 @@ const BrowseNeeds = () => {
               📢
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-white">No requests found</h3>
+              <h3 className="text-xl font-bold text-slate-50">No requests found</h3>
               <p className="text-slate-404 text-slate-400 text-sm leading-relaxed">
                 There are no open requests matching your filters. Why not post a need yourself?
               </p>

@@ -64,7 +64,7 @@ const ProductCard = ({ product }) => {
         <div className="flex justify-between items-end border-t border-slate-850/50 pt-3">
           <div className="flex flex-col">
             <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Price</span>
-            <span className="text-lg font-black text-indigo-455 text-indigo-400">${price.toFixed(2)}</span>
+            <span className="text-lg font-black text-indigo-455 text-indigo-400">₹{price}</span>
           </div>
           <span className="text-[10px] text-slate-500 font-medium mb-1">{timeAgo}</span>
         </div>
