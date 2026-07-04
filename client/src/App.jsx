@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
+import AddProduct from './pages/AddProduct';
+import MyListings from './pages/MyListings';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -31,6 +33,22 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products/new"
+          element={
+            <ProtectedRoute>
+              <AddProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/products/my-listings"
+          element={
+            <ProtectedRoute>
+              <MyListings />
             </ProtectedRoute>
           }
         />
