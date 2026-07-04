@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ImageUpload from '../components/ImageUpload';
+import axiosInstance from '../api/axiosInstance';
+import toast from 'react-hot-toast';
 
 const AddProduct = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams();
+  
+  const isEditMode = !!id;
 
   const [formData, setFormData] = useState({
     title: '',
@@ -19,7 +24,7 @@ const AddProduct = () => {
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [toast, setToast] = useState(null); // { type: 'success' | 'error', message: string }
+  const [fetchingProduct, setFetchingProduct] = useState(false);
 
   const categories = [
     'Grocery',
@@ -36,26 +41,55 @@ const AddProduct = () => {
 
   const hostelOptions = ['Hostel A', 'Hostel B', 'Hostel C'];
 
-  // Pre-fill hostel and roomNumber from user context once available
+  // Fetch product to edit if in edit mode
   useEffect(() => {
-    if (user) {
+    if (isEditMode) {
+      const fetchProductToEdit = async () => {
+        setFetchingProduct(true);
+        try {
+          const res = await axiosInstance.get(`/products/${id}`);
+          const data = res.data;
+
+          // Verify ownership
+          if (user && data.product.seller._id !== user._id) {
+            toast.error('Unauthorized: You are not the owner of this listing');
+            setTimeout(() => navigate('/products/my-listings'), 2000);
+            return;
+          }
+
+          setFormData({
+            title: data.product.title,
+            price: data.product.price.toString(),
+            category: data.product.category,
+            description: data.product.description || '',
+            images: data.product.images || [],
+            hostel: data.product.hostel,
+            roomNumber: data.product.roomNumber
+          });
+        } catch (err) {
+          console.error(err);
+          toast.error('Failed to load listing details for editing');
+        } finally {
+          setFetchingProduct(false);
+        }
+      };
+
+      if (user) {
+        fetchProductToEdit();
+      }
+    }
+  }, [id, isEditMode, user]);
+
+  // Pre-fill hostel and roomNumber from user context once available (for Create Mode only)
+  useEffect(() => {
+    if (user && !isEditMode) {
       setFormData((prev) => ({
         ...prev,
         hostel: prev.hostel || user.hostel || '',
         roomNumber: prev.roomNumber || user.roomNumber || ''
       }));
     }
-  }, [user]);
-
-  // Handle toast timeout
-  useEffect(() => {
-    if (toast) {
-      const timer = setTimeout(() => {
-        setToast(null);
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
+  }, [user, isEditMode]);
 
   const validate = () => {
     const tempErrors = {};
@@ -86,50 +120,30 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) {
-      setToast({ type: 'error', message: 'Please correct the validation errors below.' });
+      toast.error('Please correct the validation errors below.');
       return;
     }
 
     setSubmitting(true);
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
     try {
-      const response = await fetch(`${apiBaseUrl}/products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          price: Number(formData.price),
-          category: formData.category,
-          images: formData.images,
-          hostel: formData.hostel,
-          roomNumber: formData.roomNumber.trim()
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to list product');
-      }
-
-      // Success
-      setToast({ type: 'success', message: 'Product listed successfully! Redirecting...' });
+      const url = isEditMode ? `/products/${id}` : '/products';
+      const response = await (isEditMode ? axiosInstance.put(url, formData) : axiosInstance.post(url, formData));
+      
+      toast.success(isEditMode ? 'Listing updated successfully! Redirecting...' : 'Product listed successfully! Redirecting...');
       
       // Reset form
-      setFormData({
-        title: '',
-        price: '',
-        category: '',
-        description: '',
-        images: [],
-        hostel: user?.hostel || '',
-        roomNumber: user?.roomNumber || ''
-      });
+      if (!isEditMode) {
+        setFormData({
+          title: '',
+          price: '',
+          category: '',
+          description: '',
+          images: [],
+          hostel: user?.hostel || '',
+          roomNumber: user?.roomNumber || ''
+        });
+      }
 
       // Redirect after brief delay
       setTimeout(() => {
@@ -138,25 +152,25 @@ const AddProduct = () => {
 
     } catch (err) {
       console.error(err);
-      setToast({ type: 'error', message: err.message || 'Server error. Failed to add product.' });
+      toast.error(err.response?.data?.message || (isEditMode ? 'Failed to update listing' : 'Failed to create listing'));
     } finally {
       setSubmitting(false);
     }
   };
+  if (fetchingProduct) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-555 border-t-indigo-500 rounded-full animate-spin"></div>
+          <p className="text-slate-400 text-sm">Loading listing details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Toast Alert */}
-      {toast && (
-        <div className={`fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl border text-sm shadow-xl animate-bounce ${
-          toast.type === 'success'
-            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-            : 'bg-rose-500/10 border-rose-500/30 text-rose-450 text-rose-400'
-        }`}>
-          <span>{toast.type === 'success' ? '✅' : '⚠️'}</span>
-          <span>{toast.message}</span>
-        </div>
-      )}
+
 
       {/* Navbar */}
       <nav className="border-b border-slate-900 bg-slate-950/70 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-40">
@@ -165,11 +179,11 @@ const AddProduct = () => {
             🏠 HostelHub
           </Link>
           <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            Create Listing
+            {isEditMode ? 'Edit Listing' : 'Create Listing'}
           </span>
         </div>
         <Link
-          to="/dashboard"
+          to="/products/my-listings"
           className="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white px-3 py-1.5 rounded-lg border border-slate-850 transition-all"
         >
           Cancel
@@ -183,8 +197,12 @@ const AddProduct = () => {
 
         <div className="z-10 relative space-y-8">
           <div>
-            <h2 className="text-3xl font-extrabold text-white tracking-tight">Sell an Item</h2>
-            <p className="text-slate-400 text-sm mt-1">List pre-loved stuff, food, or electronics for other hostel tenants.</p>
+            <h2 className="text-3xl font-extrabold text-white tracking-tight">
+              {isEditMode ? 'Edit Listing' : 'Sell an Item'}
+            </h2>
+            <p className="text-slate-400 text-sm mt-1">
+              {isEditMode ? 'Modify your product details and images.' : 'List pre-loved stuff, food, or electronics for other hostel tenants.'}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="bg-slate-900/40 border border-slate-850 p-6 md:p-8 rounded-2xl shadow-xl space-y-6">
@@ -327,7 +345,7 @@ const AddProduct = () => {
               {submitting ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
-                'Publish Listing'
+                isEditMode ? 'Save Changes' : 'Publish Listing'
               )}
             </button>
           </form>

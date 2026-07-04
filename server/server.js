@@ -5,6 +5,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/upload');
 const productRoutes = require('./routes/products');
+const needRoutes = require('./routes/needs');
 
 // Connect to Database
 connectDB();
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/needs', needRoutes);
 
 // Basic Health Check Route
 app.get('/api/health', (req, res) => {

@@ -8,7 +8,8 @@ const {
   getMyListings,
   updateProduct,
   deleteProduct,
-  toggleProductStatus
+  toggleProductStatus,
+  logContact
 } = require('../controllers/productController');
 
 // Public Product List and creation endpoint
@@ -23,5 +24,6 @@ router.get('/:id', getProductById);
 router.put('/:id', protect, updateProduct);
 router.delete('/:id', protect, deleteProduct);
 router.patch('/:id/status', protect, toggleProductStatus);
+router.post('/:id/contact-log', protect, logContact);
 
 module.exports = router;

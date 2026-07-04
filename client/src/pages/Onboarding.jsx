@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axiosInstance';
+import toast from 'react-hot-toast';
 
 const Onboarding = () => {
-  const { user, token, updateUser, isAuthenticated } = useAuth();
+  const { user, updateUser, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -13,7 +15,6 @@ const Onboarding = () => {
   });
   
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Hardcoded list of hostels
@@ -47,41 +48,31 @@ const Onboarding = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiError('');
     
     if (!validateForm()) return;
 
     setLoading(true);
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
     try {
-      const response = await fetch(`${apiBaseUrl}/auth/onboarding`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          hostel: formData.hostel,
-          roomNumber: formData.roomNumber.trim(),
-          phoneNumber: formData.phoneNumber.replace(/\s+/g, '')
-        }),
+      const response = await axiosInstance.put('/auth/onboarding', {
+        hostel: formData.hostel,
+        roomNumber: formData.roomNumber.trim(),
+        phoneNumber: formData.phoneNumber.replace(/\s+/g, '')
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to complete onboarding details');
-      }
+      const data = response.data;
 
       // Update user details in context
       updateUser(data.user);
+      
+      toast.success('Profile configured successfully!');
 
       // Redirect user to the Home page (/) after successful onboarding
       navigate('/');
     } catch (err) {
       console.error('Onboarding Submission Error:', err);
-      setApiError(err.message || 'Connection error. Failed to save details.');
+      const errMsg = err.response?.data?.message || 'Connection error. Failed to save details.';
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
@@ -107,11 +98,7 @@ const Onboarding = () => {
         </div>
 
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-850 p-8 rounded-2xl shadow-2xl hover:border-slate-800 transition-colors duration-300">
-          {apiError && (
-            <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm rounded-xl text-center font-medium animate-shake">
-              ⚠️ {apiError}
-            </div>
-          )}
+
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Hostel Dropdown */}

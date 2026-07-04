@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axiosInstance';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated, user } = useAuth();
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // If already logged in, redirect away from login
@@ -19,28 +20,17 @@ const Login = () => {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
-    setError('');
     
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
     const idToken = credentialResponse.credential;
 
     try {
-      const response = await fetch(`${apiBaseUrl}/auth/google`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idToken }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Google authentication failed');
-      }
+      const response = await axiosInstance.post('/auth/google', { idToken });
+      const data = response.data;
 
       // Save token and user details in context
       login(data.token, data.user);
+      
+      toast.success('Logged in successfully!');
 
       // Navigate based on onboarding requirement
       if (data.needsOnboarding) {
@@ -50,14 +40,15 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Google Sign In Error:', err);
-      setError(err.message || 'Server connection failed. Please try again.');
+      const errMsg = err.response?.data?.message || 'Server connection failed. Please try again.';
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleFailure = () => {
-    setError('Google Sign-In was unsuccessful. Please check your credentials or network and try again.');
+    toast.error('Google Sign-In was unsuccessful. Please check your credentials or network and try again.');
   };
 
   return (
@@ -81,11 +72,7 @@ const Login = () => {
             <p className="text-xs text-slate-400 mt-1">Access rooms registry, needs board, and services</p>
           </div>
 
-          {error && (
-            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-450 text-sm rounded-xl text-center text-rose-450 text-rose-400">
-              ⚠️ {error}
-            </div>
-          )}
+
 
           {loading ? (
             <div className="flex flex-col items-center py-6 gap-3">

@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import axiosInstance from '../api/axiosInstance';
+import toast from 'react-hot-toast';
 
 /**
  * Reusable Multi-Image Upload Component
@@ -8,7 +10,6 @@ import { useAuth } from '../context/AuthContext';
  * @param {number} maxImages - Maximum allowed images (default 5)
  */
 const ImageUpload = ({ value = [], onChange, maxImages = 5 }) => {
-  const { token } = useAuth();
   const [localFiles, setLocalFiles] = useState([]); // [{ file: File, id: string, preview: string }]
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -89,34 +90,29 @@ const ImageUpload = ({ value = [], onChange, maxImages = 5 }) => {
       formData.append('images', item.file);
     });
 
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-
     try {
-      const response = await fetch(`${apiBaseUrl}/upload`, {
-        method: 'POST',
+      const response = await axiosInstance.post('/upload', formData, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
+          'Content-Type': 'multipart/form-data'
+        }
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Image upload failed');
-      }
+      const data = response.data;
 
       // Append new URLs to the parent array
       const newUrls = data.urls || [];
       const updatedUrls = [...value, ...newUrls];
       onChange(updatedUrls);
 
+      toast.success('Images uploaded successfully!');
+
       // Clear local files and revoke objects
       localFiles.forEach(item => URL.revokeObjectURL(item.preview));
       setLocalFiles([]);
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Error uploading files. Please try again.');
+      const errMsg = err.response?.data?.message || 'Error uploading files. Please try again.';
+      setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setUploading(false);
     }

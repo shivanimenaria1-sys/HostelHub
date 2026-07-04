@@ -58,6 +58,10 @@ const ProductSchema = new mongoose.Schema({
     enum: ['Available', 'Sold'],
     default: 'Available'
   },
+  contactCount: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

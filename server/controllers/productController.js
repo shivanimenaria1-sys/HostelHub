@@ -363,6 +363,45 @@ const toggleProductStatus = async (req, res) => {
   }
 };
 
+// @desc    Increment product contact count
+// @route   POST /api/products/:id/contact-log
+// @access  Private (Authenticated)
+const logContact = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Product not found'
+      });
+    }
+
+    // Increment contactCount only for authenticated users who are not the product owner
+    if (req.user.id !== product.seller.toString()) {
+      product.contactCount = (product.contactCount || 0) + 1;
+      await product.save();
+      return res.status(200).json({
+        status: 'success',
+        message: 'Contact count logged successfully',
+        contactCount: product.contactCount
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'User is the owner. Count not incremented.',
+      contactCount: product.contactCount
+    });
+  } catch (error) {
+    console.error('Log Contact Error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Failed to log contact click'
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   getProducts,
@@ -370,5 +409,6 @@ module.exports = {
   getMyListings,
   updateProduct,
   deleteProduct,
-  toggleProductStatus
+  toggleProductStatus,
+  logContact
 };
