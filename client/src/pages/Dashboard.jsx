@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHostels } from '../context/HostelContext';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
@@ -42,7 +43,7 @@ const Dashboard = () => {
   // Post form states
   const [newRequest, setNewRequest] = useState({
     requestType: 'Room Switch',
-    currentHostel: 'Hostel A',
+    currentHostel: 'B1',
     currentBlock: '',
     currentRoomNumber: '',
     roomType: 'Single',
@@ -68,7 +69,8 @@ const Dashboard = () => {
     'No Loud Music'
   ];
 
-  const hostelOptions = ['Hostel A', 'Hostel B', 'Hostel C'];
+  // Dynamic hostel list from MongoDB via context
+  const { hostelNames, loading: hostelsLoading, error: hostelsError } = useHostels();
   const roomTypeOptions = ['Single', 'Double', 'Triple'];
 
   // Fetch Stats & Requests on mount / filter change
@@ -175,7 +177,7 @@ const Dashboard = () => {
         // Reset Form
         setNewRequest({
           requestType: 'Room Switch',
-          currentHostel: user?.hostel || 'Hostel A',
+          currentHostel: user?.hostel || 'B1',
           currentBlock: '',
           currentRoomNumber: user?.roomNumber || '',
           roomType: 'Single',
@@ -245,7 +247,7 @@ const Dashboard = () => {
   const openPostModal = () => {
     setNewRequest(prev => ({
       ...prev,
-      currentHostel: user?.hostel || 'Hostel A',
+      currentHostel: user?.hostel || 'B1',
       currentRoomNumber: user?.roomNumber || '',
       whatsappNumber: user?.phoneNumber || ''
     }));
@@ -348,7 +350,7 @@ const Dashboard = () => {
               className="w-full px-3 py-2 bg-slate-950 border border-slate-850 rounded-xl text-xs text-slate-200 cursor-pointer focus:outline-none focus:ring-1 focus:ring-indigo-500"
             >
               <option value="">All Hostels</option>
-              {hostelOptions.map(h => <option key={h} value={h}>{h}</option>)}
+              {hostelNames.map(h => <option key={h} value={h}>{h}</option>)}
             </select>
           </div>
 
@@ -808,7 +810,13 @@ const Dashboard = () => {
                     onChange={e => setNewRequest(prev => ({ ...prev, currentHostel: e.target.value }))}
                     className="w-full px-4 py-3 bg-slate-950 border border-slate-850 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all text-slate-100 cursor-pointer text-sm"
                   >
-                    {hostelOptions.map(h => <option key={h} value={h}>{h}</option>)}
+                    {hostelsLoading ? (
+                      <option value="" disabled>Loading hostels…</option>
+                    ) : hostelsError ? (
+                      <option value="" disabled>Failed to load hostels</option>
+                    ) : (
+                      hostelNames.map(h => <option key={h} value={h}>{h}</option>)
+                    )}
                   </select>
                 </div>
 

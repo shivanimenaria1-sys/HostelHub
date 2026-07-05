@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHostels } from '../context/HostelContext';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -26,7 +27,8 @@ const Profile = () => {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  const hostelOptions = ['Hostel A', 'Hostel B', 'Hostel C'];
+  // Dynamic hostel list from MongoDB via context
+  const { hostelNames, loading: hostelsLoading, error: hostelsError } = useHostels();
 
   // Fetch statistics on mount
   useEffect(() => {
@@ -252,12 +254,18 @@ const Profile = () => {
                       value={editForm.hostel}
                       onChange={(e) => setEditForm({ ...editForm, hostel: e.target.value })}
                     >
-                      <option value="">-- Choose Hostel --</option>
-                      {hostelOptions.map((h, i) => (
-                        <option key={i} value={h}>
-                          {h}
-                        </option>
-                      ))}
+                      {hostelsLoading ? (
+                        <option value="" disabled>Loading hostels…</option>
+                      ) : hostelsError ? (
+                        <option value="" disabled>Failed to load hostels</option>
+                      ) : (
+                        <>
+                          <option value="">-- Choose Hostel --</option>
+                          {hostelNames.map((h) => (
+                            <option key={h} value={h}>{h}</option>
+                          ))}
+                        </>
+                      )}
                     </select>
                     {errors.hostel && (
                       <p className="text-rose-455 text-xs mt-1.5 text-rose-400">{errors.hostel}</p>

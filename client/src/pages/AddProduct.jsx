@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHostels } from '../context/HostelContext';
 import ImageUpload from '../components/ImageUpload';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
@@ -39,7 +40,8 @@ const AddProduct = () => {
     'Others'
   ];
 
-  const hostelOptions = ['Hostel A', 'Hostel B', 'Hostel C'];
+  // Dynamic hostel list from MongoDB via context
+  const { hostelNames, loading: hostelsLoading, error: hostelsError } = useHostels();
 
   // Fetch product to edit if in edit mode
   useEffect(() => {
@@ -305,12 +307,18 @@ const AddProduct = () => {
                   value={formData.hostel}
                   onChange={(e) => setFormData({ ...formData, hostel: e.target.value })}
                 >
-                  <option value="">-- Select Hostel --</option>
-                  {hostelOptions.map((h, i) => (
-                    <option key={i} value={h}>
-                      {h}
-                    </option>
-                  ))}
+                  {hostelsLoading ? (
+                    <option value="" disabled>Loading hostels…</option>
+                  ) : hostelsError ? (
+                    <option value="" disabled>Failed to load hostels</option>
+                  ) : (
+                    <>
+                      <option value="">-- Select Hostel --</option>
+                      {hostelNames.map((h) => (
+                        <option key={h} value={h}>{h}</option>
+                      ))}
+                    </>
+                  )}
                 </select>
                 {errors.hostel && (
                   <p className="text-rose-455 text-xs mt-1.5 text-rose-400">{errors.hostel}</p>

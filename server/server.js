@@ -8,6 +8,7 @@ const productRoutes = require('./routes/products');
 const needRoutes = require('./routes/needs');
 const exchangeRoutes = require('./routes/exchange');
 const notificationRoutes = require('./routes/notifications');
+const hostelRoutes = require('./routes/hostels');
 
 // Connect to Database
 connectDB();
@@ -26,6 +27,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/needs', needRoutes);
 app.use('/api/exchange', exchangeRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/hostels', hostelRoutes);
 
 // Basic Health Check Route
 app.get('/api/health', (req, res) => {

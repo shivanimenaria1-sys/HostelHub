@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHostels } from '../context/HostelContext';
 import axiosInstance from '../api/axiosInstance';
 import toast from 'react-hot-toast';
 
@@ -17,8 +18,8 @@ const Onboarding = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Hardcoded list of hostels
-  const hostelOptions = ['Hostel A', 'Hostel B', 'Hostel C'];
+  // Dynamic hostel list from MongoDB via context
+  const { hostelNames, loading: hostelsLoading, error: hostelsError } = useHostels();
 
   // Prevent onboarded users from accessing /onboarding (redirect them to Home /)
   if (isAuthenticated && user && !user.needsOnboarding) {
@@ -113,12 +114,18 @@ const Onboarding = () => {
                 value={formData.hostel}
                 onChange={(e) => setFormData({ ...formData, hostel: e.target.value })}
               >
-                <option value="">-- Choose Your Hostel --</option>
-                {hostelOptions.map((hostel, index) => (
-                  <option key={index} value={hostel}>
-                    {hostel}
-                  </option>
-                ))}
+                {hostelsLoading ? (
+                  <option value="" disabled>Loading hostels…</option>
+                ) : hostelsError ? (
+                  <option value="" disabled>Failed to load hostels</option>
+                ) : (
+                  <>
+                    <option value="">-- Choose Your Hostel --</option>
+                    {hostelNames.map((hostel) => (
+                      <option key={hostel} value={hostel}>{hostel}</option>
+                    ))}
+                  </>
+                )}
               </select>
               {errors.hostel && (
                 <p className="text-rose-455 text-xs mt-1.5 text-rose-400">{errors.hostel}</p>
